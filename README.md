@@ -4,7 +4,7 @@
 [![npm version](https://img.shields.io/npm/v/@philiprehberger/debounce-ts)](https://www.npmjs.com/package/@philiprehberger/debounce-ts)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 
-Typed debounce and throttle with cancel, flush, and pending state.
+Typed debounce and throttle with cancel, flush, and pending state
 
 ## Requirements
 
