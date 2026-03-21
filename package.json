@@ -1,6 +1,6 @@
 {
   "name": "@philiprehberger/debounce-ts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Typed debounce and throttle with cancel, flush, and pending state",
   "type": "module",
   "main": "./dist/index.cjs",

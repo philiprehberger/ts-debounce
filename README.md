@@ -1,14 +1,10 @@
 # @philiprehberger/debounce-ts
 
 [![CI](https://github.com/philiprehberger/ts-debounce/actions/workflows/ci.yml/badge.svg)](https://github.com/philiprehberger/ts-debounce/actions/workflows/ci.yml)
-[![npm version](https://img.shields.io/npm/v/@philiprehberger/debounce-ts)](https://www.npmjs.com/package/@philiprehberger/debounce-ts)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/@philiprehberger/debounce-ts.svg)](https://www.npmjs.com/package/@philiprehberger/debounce-ts)
+[![License](https://img.shields.io/github/license/philiprehberger/ts-debounce)](LICENSE)
 
 Typed debounce and throttle with cancel, flush, and pending state
-
-## Requirements
-
-- Node.js >= 18
 
 ## Installation
 
