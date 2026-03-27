@@ -3,6 +3,7 @@
 [![CI](https://github.com/philiprehberger/ts-debounce/actions/workflows/ci.yml/badge.svg)](https://github.com/philiprehberger/ts-debounce/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/@philiprehberger/debounce-ts.svg)](https://www.npmjs.com/package/@philiprehberger/debounce-ts)
 [![License](https://img.shields.io/github/license/philiprehberger/ts-debounce)](LICENSE)
+[![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ec6cb9)](https://github.com/sponsors/philiprehberger)
 
 Typed debounce and throttle with cancel, flush, and pending state
 
