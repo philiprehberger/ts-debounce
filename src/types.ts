@@ -5,6 +5,16 @@ export interface DebounceOptions {
   signal?: AbortSignal;
 }
 
+export interface DebounceAsyncOptions {
+  signal?: AbortSignal;
+  /**
+   * Maximum time (ms) a pending invocation may stay pending before it is
+   * auto-cancelled with a `DebounceTimeoutError`. Acts as a safety guarantee
+   * for callers that must not wait indefinitely while calls keep arriving.
+   */
+  safetyTimeout?: number;
+}
+
 export interface DebouncedFunction<T extends (...args: any[]) => any> {
   (...args: Parameters<T>): ReturnType<T> | undefined;
   cancel(): void;

@@ -1,8 +1,8 @@
 # @philiprehberger/debounce-ts
 
-[![CI](https://github.com/philiprehberger/debounce-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/philiprehberger/debounce-ts/actions/workflows/ci.yml)
+[![CI](https://github.com/philiprehberger/ts-debounce/actions/workflows/ci.yml/badge.svg)](https://github.com/philiprehberger/ts-debounce/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/@philiprehberger/debounce-ts.svg)](https://www.npmjs.com/package/@philiprehberger/debounce-ts)
-[![Last updated](https://img.shields.io/github/last-commit/philiprehberger/debounce-ts)](https://github.com/philiprehberger/debounce-ts/commits/main)
+[![Last updated](https://img.shields.io/github/last-commit/philiprehberger/ts-debounce)](https://github.com/philiprehberger/ts-debounce/commits/main)
 
 Typed debounce and throttle with cancel, flush, and pending state
 
@@ -13,8 +13,6 @@ npm install @philiprehberger/debounce-ts
 ```
 
 ## Usage
-
-### Debounce
 
 ```ts
 import { debounce } from '@philiprehberger/debounce-ts';
@@ -79,6 +77,27 @@ const fetchSuggestions = debounceAsync(async (query: string) => {
 const results = await fetchSuggestions('hello');
 ```
 
+### Async debounce with safety timeout
+
+```ts
+import { debounceAsync, DebounceTimeoutError } from '@philiprehberger/debounce-ts';
+
+// Auto-cancel a pending invocation after 2s if calls keep arriving
+const search = debounceAsync(
+  async (q: string) => fetch(`/api/search?q=${q}`).then((r) => r.json()),
+  300,
+  { safetyTimeout: 2000 }
+);
+
+try {
+  const result = await search('hel');
+} catch (err) {
+  if (err instanceof DebounceTimeoutError) {
+    console.warn(`Search timed out after ${err.timeout}ms`);
+  }
+}
+```
+
 ### AbortSignal support
 
 ```ts
@@ -101,6 +120,7 @@ controller.abort(); // cancels the pending call
 | `debounce(fn, wait, options?)` | Returns a debounced function with `cancel()`, `flush()`, and `pending` |
 | `throttle(fn, wait, options?)` | Returns a throttled function (debounce with `maxWait = wait`, leading + trailing) |
 | `debounceAsync(fn, wait, options?)` | Returns a debounced async function with shared promise and `cancel()` |
+| `DebounceTimeoutError` | Error thrown by `debounceAsync` when a pending call exceeds `safetyTimeout` |
 
 ### DebounceOptions
 
@@ -110,6 +130,13 @@ controller.abort(); // cancels the pending call
 | `trailing` | `boolean` | `true` | Invoke on the trailing edge of the wait |
 | `maxWait` | `number` | - | Maximum time `fn` can be delayed before forced invocation |
 | `signal` | `AbortSignal` | - | Abort signal to cancel pending invocation |
+
+### DebounceAsyncOptions
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `signal` | `AbortSignal` | - | Abort signal to cancel pending invocation |
+| `safetyTimeout` | `number` | - | Auto-cancel a pending call after this many ms, rejecting with `DebounceTimeoutError` |
 
 ## Development
 
@@ -123,11 +150,11 @@ npm test
 
 If you find this project useful:
 
-⭐ [Star the repo](https://github.com/philiprehberger/debounce-ts)
+⭐ [Star the repo](https://github.com/philiprehberger/ts-debounce)
 
-🐛 [Report issues](https://github.com/philiprehberger/debounce-ts/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
+🐛 [Report issues](https://github.com/philiprehberger/ts-debounce/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
 
-💡 [Suggest features](https://github.com/philiprehberger/debounce-ts/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
+💡 [Suggest features](https://github.com/philiprehberger/ts-debounce/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
 
 ❤️ [Sponsor development](https://github.com/sponsors/philiprehberger)
 

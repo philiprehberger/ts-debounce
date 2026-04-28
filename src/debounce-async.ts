@@ -1,13 +1,16 @@
-import type { DebounceOptions, DebouncedAsyncFunction } from './types.js';
+import type { DebounceAsyncOptions, DebouncedAsyncFunction } from './types.js';
+import { DebounceTimeoutError } from './errors.js';
 
 export function debounceAsync<T extends (...args: any[]) => Promise<any>>(
   fn: T,
   wait: number,
-  options: Omit<DebounceOptions, 'leading' | 'trailing'> = {}
+  options: DebounceAsyncOptions = {}
 ): DebouncedAsyncFunction<T> {
-  const { signal } = options;
+  const { signal, safetyTimeout } = options;
+  const hasSafetyTimeout = typeof safetyTimeout === 'number' && safetyTimeout > 0;
 
   let timerId: ReturnType<typeof setTimeout> | undefined;
+  let safetyTimerId: ReturnType<typeof setTimeout> | undefined;
   let lastArgs: Parameters<T> | undefined;
   let lastThis: any;
   let pendingResolve: ((value: any) => void) | undefined;
@@ -21,18 +24,41 @@ export function debounceAsync<T extends (...args: any[]) => Promise<any>>(
     }
   }
 
-  function cancel(): void {
-    clearTimer();
-
-    if (pendingReject) {
-      pendingReject(new DOMException('Debounced call was cancelled', 'AbortError'));
+  function clearSafetyTimer(): void {
+    if (safetyTimerId !== undefined) {
+      clearTimeout(safetyTimerId);
+      safetyTimerId = undefined;
     }
+  }
 
+  function resetState(): void {
     lastArgs = undefined;
     lastThis = undefined;
     pendingResolve = undefined;
     pendingReject = undefined;
     pendingPromise = undefined;
+  }
+
+  function cancel(): void {
+    clearTimer();
+    clearSafetyTimer();
+
+    if (pendingReject) {
+      pendingReject(new DOMException('Debounced call was cancelled', 'AbortError'));
+    }
+
+    resetState();
+  }
+
+  function safetyTimeoutExpired(): void {
+    clearTimer();
+    clearSafetyTimer();
+
+    if (pendingReject) {
+      pendingReject(new DebounceTimeoutError(safetyTimeout!));
+    }
+
+    resetState();
   }
 
   function isPending(): boolean {
@@ -50,22 +76,24 @@ export function debounceAsync<T extends (...args: any[]) => Promise<any>>(
         pendingResolve = resolve;
         pendingReject = reject;
       }) as ReturnType<T>;
+
+      // Start safety timer once per pending cycle (not reset on every call).
+      if (hasSafetyTimeout) {
+        safetyTimerId = setTimeout(safetyTimeoutExpired, safetyTimeout);
+      }
     }
 
     const currentPromise = pendingPromise;
 
     timerId = setTimeout(async () => {
       timerId = undefined;
+      clearSafetyTimer();
       const resolve = pendingResolve!;
       const reject = pendingReject!;
       const callArgs = lastArgs!;
       const callThis = lastThis;
 
-      lastArgs = undefined;
-      lastThis = undefined;
-      pendingResolve = undefined;
-      pendingReject = undefined;
-      pendingPromise = undefined;
+      resetState();
 
       try {
         const result = await fn.apply(callThis, callArgs);

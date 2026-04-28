@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0 (2026-04-27)
+
+- Add `safetyTimeout` option to `debounceAsync` that auto-cancels a pending invocation after the configured ms, rejecting the shared promise with a new exported `DebounceTimeoutError`
+- Export `DebounceAsyncOptions` and `DebounceTimeoutError` from the package entry
+- Compliance: README structure aligned with template
+
 ## 0.1.2
 
 - Standardize README to 3-badge format with emoji Support section
